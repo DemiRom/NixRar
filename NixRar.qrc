@@ -1,0 +1,16 @@
+<RCC>
+  <qresource prefix="Icons">
+    <file>icons/exit.png</file>
+    <file>icons/open.png</file>
+    <file>icons/up-arrow.png</file>
+    <file>icons/band-aid.png</file>
+    <file>icons/bin.png</file>
+    <file>icons/checklist.png</file>
+    <file>icons/folders.png</file>
+    <file>icons/info.png</file>
+    <file>icons/loupe.png</file>
+    <file>icons/magic-wand.png</file>
+    <file>icons/open-book.png</file>
+    <file>icons/rar-format.png</file>
+  </qresource>
+</RCC>

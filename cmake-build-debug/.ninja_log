@@ -1,0 +1,16 @@
+# ninja log v7
+17	4244	1755745404436273847	build.ninja	160b34ca365789e3
+40	507	1755745404946419000	NixRar_autogen/timestamp	770bbcece7a15734
+40	507	1755745404946419000	NixRar_autogen/mocs_compilation.cpp	770bbcece7a15734
+40	507	1755745404946419000	/Users/demi/Projects/NixRar/cmake-build-debug/NixRar_autogen/timestamp	770bbcece7a15734
+40	507	1755745404946419000	/Users/demi/Projects/NixRar/cmake-build-debug/NixRar_autogen/mocs_compilation.cpp	770bbcece7a15734
+507	543	1755745404993095991	NixRar_autogen/EWIEGA46WW/qrc_NixRar.cpp	3d5a5375df6095af
+507	543	1755745404993095991	/Users/demi/Projects/NixRar/cmake-build-debug/NixRar_autogen/EWIEGA46WW/qrc_NixRar.cpp	3d5a5375df6095af
+545	743	1755745404996217129	CMakeFiles/NixRar.dir/NixRar_autogen/EWIEGA46WW/qrc_NixRar.cpp.o	b09e582582f5afa8
+544	1594	1755745404994545330	CMakeFiles/NixRar.dir/FileExplorerModel.cpp.o	716d7a7401b332fa
+544	1714	1755745404994356871	CMakeFiles/NixRar.dir/main.cpp.o	5712bdfc9d214667
+543	1746	1755745404994188537	CMakeFiles/NixRar.dir/NixRar_autogen/mocs_compilation.cpp.o	45acbf2f86317951
+544	1753	1755745404994729581	CMakeFiles/NixRar.dir/FileExplorer.cpp.o	a44f318cf729e9db
+544	1790	1755745404994637539	CMakeFiles/NixRar.dir/Archive.cpp.o	d71eb20c97c237a0
+544	1923	1755745404994453330	CMakeFiles/NixRar.dir/MainWindow.cpp.o	7d4d691c85dd52d8
+1923	2011	1755745406373948036	NixRar	cec586700814dd8a

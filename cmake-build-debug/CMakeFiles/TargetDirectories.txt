@@ -1,0 +1,5 @@
+/Users/demi/Projects/NixRar/cmake-build-debug/CMakeFiles/NixRar.dir
+/Users/demi/Projects/NixRar/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/demi/Projects/NixRar/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/demi/Projects/NixRar/cmake-build-debug/CMakeFiles/NixRar_autogen_timestamp_deps.dir
+/Users/demi/Projects/NixRar/cmake-build-debug/CMakeFiles/NixRar_autogen.dir
