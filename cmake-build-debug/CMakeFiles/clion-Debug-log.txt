@@ -1,5 +1,5 @@
 /Users/demi/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Users/demi/Applications/CLion.app/Contents/bin/ninja/mac/aarch64/ninja -G Ninja -S /Users/demi/Projects/NixRar -B /Users/demi/Projects/NixRar/cmake-build-debug
 -- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
--- Configuring done (0.5s)
+-- Configuring done (0.2s)
 -- Generating done (0.1s)
 -- Build files have been written to: /Users/demi/Projects/NixRar/cmake-build-debug
