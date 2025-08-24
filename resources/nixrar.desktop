@@ -2,7 +2,7 @@
 Name=NixRar
 Comment=Modern cross-platform archive manager
 GenericName=Archive Manager
-Exec=nixrar %F
+Exec=NixRar %F
 Icon=nixrar
 StartupNotify=true
 MimeType=application/zip;application/x-tar;application/x-gzip;application/x-bzip2;application/x-compress;application/x-rar;application/x-7z-compressed;application/x-cab;application/x-arj;application/x-lha;application/x-ace;
