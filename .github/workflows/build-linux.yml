@@ -1,0 +1,131 @@
+name: Build Linux Release
+
+on:
+  push:
+    branches: [ main, master, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-22.04
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for version info
+    
+    - name: Install Qt6 and dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          qt6-base-dev \
+          qt6-tools-dev \
+          qt6-tools-dev-tools \
+          libarchive-dev \
+          cmake \
+          build-essential \
+          ninja-build \
+          pkg-config \
+          libgl1-mesa-dev \
+          libxkbcommon-dev \
+          libxcb-xinerama0-dev \
+          libxcb-cursor0 \
+          libxcb-cursor-dev \
+          fuse \
+          file \
+          desktop-file-utils
+
+    - name: Setup build environment
+      run: |
+        echo "Qt6_DIR=/usr/lib/x86_64-linux-gnu/cmake/Qt6" >> $GITHUB_ENV
+        echo "CMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6" >> $GITHUB_ENV
+        
+    - name: Get version from git
+      id: version
+      run: |
+        if [[ $GITHUB_REF == refs/tags/* ]]; then
+          VERSION=${GITHUB_REF#refs/tags/v}
+        else
+          VERSION=$(git describe --tags --always --dirty)
+        fi
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+    - name: Configure CMake
+      run: |
+        cmake -B build \
+          -G Ninja \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=/usr \
+          -DNIXRAR_VERSION="${{ env.VERSION }}"
+
+    - name: Build
+      run: |
+        cmake --build build --config Release
+
+    - name: Install to AppDir
+      run: |
+        DESTDIR=$PWD/AppDir cmake --install build
+        
+    - name: Download linuxdeploy and plugins
+      run: |
+        wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+        wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+        chmod +x linuxdeploy-x86_64.AppImage linuxdeploy-plugin-qt-x86_64.AppImage
+
+    - name: Create AppImage
+      run: |
+        export QMAKE=/usr/bin/qmake6
+        ./linuxdeploy-x86_64.AppImage \
+          --appdir AppDir \
+          --plugin qt \
+          --output appimage \
+          --desktop-file=AppDir/usr/share/applications/nixrar.desktop \
+          --icon-file=AppDir/usr/share/icons/hicolor/256x256/apps/nixrar.png
+
+    - name: Rename AppImage
+      run: |
+        mv NixRar*.AppImage NixRar-${{ env.VERSION }}-linux-x86_64.AppImage
+
+    - name: Create binary archive
+      run: |
+        cd build
+        tar -czf ../NixRar-${{ env.VERSION }}-linux-x86_64.tar.gz NixRar
+        cd ..
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: NixRar-Linux-${{ env.VERSION }}
+        path: |
+          NixRar-${{ env.VERSION }}-linux-x86_64.AppImage
+          NixRar-${{ env.VERSION }}-linux-x86_64.tar.gz
+
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          NixRar-${{ env.VERSION }}-linux-x86_64.AppImage
+          NixRar-${{ env.VERSION }}-linux-x86_64.tar.gz
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+        name: NixRar v${{ env.VERSION }}
+        body: |
+          ## NixRar v${{ env.VERSION }}
+          
+          ### Downloads
+          - **AppImage** (Recommended): `NixRar-${{ env.VERSION }}-linux-x86_64.AppImage`
+          - **Binary Archive**: `NixRar-${{ env.VERSION }}-linux-x86_64.tar.gz`
+          
+          ### Installation
+          **AppImage**: Download, make executable (`chmod +x`), and run
+          **Binary**: Extract and run the `NixRar` executable
+          
+          Built automatically from commit ${{ github.sha }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
