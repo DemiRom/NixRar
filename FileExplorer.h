@@ -1,6 +1,7 @@
 #ifndef FILEEXPLORER_H
 #define FILEEXPLORER_H
 
+#include <QPushButton>
 #include <QTreeView>
 
 namespace dd::nixrar::ui {
@@ -14,6 +15,8 @@ Q_OBJECT
 public:
     explicit FileExplorer(QWidget *parent = nullptr);
     ~FileExplorer() override;
+
+    void updateView();
 
 signals:
     void filesDropped(const QStringList &filePaths);
@@ -30,10 +33,6 @@ void dragEnterEvent(QDragEnterEvent *event) override;
 void dragLeaveEvent(QDragLeaveEvent *event) override;
 
 void dropEvent(QDropEvent *event) override;
-
-void mouseReleaseEvent(QMouseEvent *event) override;
-
-void mouseDoubleClickEvent(QMouseEvent *event) override;
 
 void dragMoveEvent(QDragMoveEvent *event) override;
 

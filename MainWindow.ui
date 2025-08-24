@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>37</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -272,6 +272,9 @@
    <property name="toolTip">
     <string>Delete item from archive</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Backspace</string>
+   </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
@@ -356,6 +359,9 @@
    <property name="text">
     <string>Exit</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
   </action>
   <action name="actionAbout">
    <property name="icon">
@@ -385,15 +391,24 @@
    <property name="text">
     <string>Copy Files to Clipboard</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
   </action>
   <action name="actionPaste_Files_from_Clipboard">
    <property name="text">
     <string>Paste Files from Clipboard</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
   </action>
   <action name="actionCopy_Full_Names_to_Clipboard">
    <property name="text">
     <string>Copy Full Names to Clipboard</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+V</string>
    </property>
   </action>
   <action name="actionSelect_All">

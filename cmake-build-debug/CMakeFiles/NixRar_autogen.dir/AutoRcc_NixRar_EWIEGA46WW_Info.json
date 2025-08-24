@@ -9,6 +9,7 @@
 	"INCLUDE_DIR" : "/Users/demi/Projects/NixRar/cmake-build-debug/NixRar_autogen/include",
 	"INPUTS" : 
 	[
+		"/Users/demi/Projects/NixRar/ABOUT.md",
 		"/Users/demi/Projects/NixRar/icons/checklist.png",
 		"/Users/demi/Projects/NixRar/icons/folders.png",
 		"/Users/demi/Projects/NixRar/icons/bin.png",

@@ -280,7 +280,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 800, 37));
+        menubar->setGeometry(QRect(0, 0, 800, 24));
         menuFile = new QMenu(menubar);
         menuFile->setObjectName("menuFile");
         menuCommands = new QMenu(menubar);
@@ -433,6 +433,9 @@ public:
 #if QT_CONFIG(tooltip)
         actionDelete->setToolTip(QCoreApplication::translate("MainWindow", "Delete item from archive", nullptr));
 #endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(shortcut)
+        actionDelete->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+Backspace", nullptr));
+#endif // QT_CONFIG(shortcut)
         actionFind->setText(QCoreApplication::translate("MainWindow", "Find", nullptr));
 #if QT_CONFIG(tooltip)
         actionFind->setToolTip(QCoreApplication::translate("MainWindow", "Find item in archive", nullptr));
@@ -454,13 +457,25 @@ public:
         actionOpen->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+O", nullptr));
 #endif // QT_CONFIG(shortcut)
         actionExit->setText(QCoreApplication::translate("MainWindow", "Exit", nullptr));
+#if QT_CONFIG(shortcut)
+        actionExit->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+Q", nullptr));
+#endif // QT_CONFIG(shortcut)
         actionAbout->setText(QCoreApplication::translate("MainWindow", "About", nullptr));
         actionSave_Archive_Copy_As->setText(QCoreApplication::translate("MainWindow", "Save Archive Copy As", nullptr));
         actionChange_Drive->setText(QCoreApplication::translate("MainWindow", "Change Drive", nullptr));
         actionSet_Default_Password->setText(QCoreApplication::translate("MainWindow", "Set Default Password", nullptr));
         actionCopy_Files_to_Clipboard->setText(QCoreApplication::translate("MainWindow", "Copy Files to Clipboard", nullptr));
+#if QT_CONFIG(shortcut)
+        actionCopy_Files_to_Clipboard->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+C", nullptr));
+#endif // QT_CONFIG(shortcut)
         actionPaste_Files_from_Clipboard->setText(QCoreApplication::translate("MainWindow", "Paste Files from Clipboard", nullptr));
+#if QT_CONFIG(shortcut)
+        actionPaste_Files_from_Clipboard->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+V", nullptr));
+#endif // QT_CONFIG(shortcut)
         actionCopy_Full_Names_to_Clipboard->setText(QCoreApplication::translate("MainWindow", "Copy Full Names to Clipboard", nullptr));
+#if QT_CONFIG(shortcut)
+        actionCopy_Full_Names_to_Clipboard->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+Shift+V", nullptr));
+#endif // QT_CONFIG(shortcut)
         actionSelect_All->setText(QCoreApplication::translate("MainWindow", "Select All", nullptr));
         actionSelect_Group->setText(QCoreApplication::translate("MainWindow", "Select Group", nullptr));
         actionDeselect_Group->setText(QCoreApplication::translate("MainWindow", "Deselect Group", nullptr));

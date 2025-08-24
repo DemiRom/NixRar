@@ -38,10 +38,17 @@ template <> constexpr inline auto dd::nixrar::ui::FileExplorer::qt_create_metaob
 {
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
-        "dd::nixrar::ui::FileExplorer"
+        "dd::nixrar::ui::FileExplorer",
+        "filesDropped",
+        "",
+        "filePaths"
     };
 
     QtMocHelpers::UintData qt_methods {
+        // Signal 'filesDropped'
+        QtMocHelpers::SignalData<void(const QStringList &)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QStringList, 3 },
+        }}),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -63,10 +70,16 @@ Q_CONSTINIT const QMetaObject dd::nixrar::ui::FileExplorer::staticMetaObject = {
 void dd::nixrar::ui::FileExplorer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     auto *_t = static_cast<FileExplorer *>(_o);
-    (void)_t;
-    (void)_c;
-    (void)_id;
-    (void)_a;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: _t->filesDropped((*reinterpret_cast< std::add_pointer_t<QStringList>>(_a[1]))); break;
+        default: ;
+        }
+    }
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (FileExplorer::*)(const QStringList & )>(_a, &FileExplorer::filesDropped, 0))
+            return;
+    }
 }
 
 const QMetaObject *dd::nixrar::ui::FileExplorer::metaObject() const
@@ -85,6 +98,24 @@ void *dd::nixrar::ui::FileExplorer::qt_metacast(const char *_clname)
 int dd::nixrar::ui::FileExplorer::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QTreeView::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        if (_id < 1)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 1;
+    }
+    if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        if (_id < 1)
+            *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
+        _id -= 1;
+    }
     return _id;
+}
+
+// SIGNAL 0
+void dd::nixrar::ui::FileExplorer::filesDropped(const QStringList & _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1);
 }
 QT_WARNING_POP

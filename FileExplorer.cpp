@@ -41,12 +41,12 @@ namespace dd::nixrar::ui {
             if (hasValidFiles) {
                 event->setDropAction(Qt::CopyAction);
                 event->acceptProposedAction();
-                event->accept();
-                
+
                 if (!isDragActive) {
                     isDragActive = true;
                     setStyleSheet("QTreeView { border: 2px dashed #0078d4; background-color: rgba(0, 120, 212, 0.1); }");
                 }
+                event->accept();
                 return;
             }
         }
@@ -92,18 +92,18 @@ namespace dd::nixrar::ui {
         event->accept();
     }
 
-    void FileExplorer::mouseReleaseEvent(QMouseEvent *event) {
-        QTreeView::mouseReleaseEvent(event);
-    }
-
-    void FileExplorer::mouseDoubleClickEvent(QMouseEvent *event) {
-        qDebug() << event->pos();
-        QTreeView::mouseDoubleClickEvent(event);
-    }
-
     void FileExplorer::dragMoveEvent(QDragMoveEvent *event) {
-        QTreeView::dragMoveEvent(event);
+        if (event->mimeData()->hasUrls()) {
+            event->setDropAction(Qt::CopyAction);
+            event->accept();
+        } else {
+            event->ignore();
+        }
     }
 
     FileExplorer::~FileExplorer() = default;
+
+    void FileExplorer::updateView() {
+
+    }
 } // dd::nixrar::ui

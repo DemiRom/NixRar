@@ -13,4 +13,7 @@
     <file>icons/open-book.png</file>
     <file>icons/rar-format.png</file>
   </qresource>
+  <qresource prefix="Text">
+    <file>ABOUT.md</file>
+  </qresource>
 </RCC>
