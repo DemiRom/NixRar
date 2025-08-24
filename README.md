@@ -1,5 +1,9 @@
 # NixRar 🗃️
 
+[![Build Linux](https://github.com/demirom/NixRar/actions/workflows/build-linux.yml/badge.svg)](https://github.com/demirom/NixRar/actions/workflows/build-linux.yml)
+[![GitHub release](https://img.shields.io/github/v/release/demirom/NixRar)](https://github.com/demirom/NixRar/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A modern, cross-platform archive manager built with Qt and libarchive. NixRar provides a free, open-source alternative to WinRAR with a clean interface and powerful archive management capabilities.
 
 ## Features ✨
@@ -18,14 +22,22 @@ A modern, cross-platform archive manager built with Qt and libarchive. NixRar pr
 
 ## Installation 🛠️
 
-### Prerequisites
+### Quick Install (Linux)
 
-- **Qt 6.x** or later
-- **libarchive** development libraries
-- **CMake 3.16** or later
-- A C++17 compatible compiler
+**Download from Releases:**
+- **AppImage** (Recommended): Download from [releases](https://github.com/demirom/NixRar/releases), make executable, and run
+- **Binary Archive**: Extract and run the `NixRar` executable
 
 ### Building from Source
+
+#### Prerequisites
+
+- **Qt 6.x** or later
+- **libarchive** development libraries  
+- **CMake 3.16** or later
+- A C++20 compatible compiler
+
+#### Build Steps
 
 1. **Clone the repository:**
    ```bash
@@ -37,12 +49,12 @@ A modern, cross-platform archive manager built with Qt and libarchive. NixRar pr
 
    **Ubuntu/Debian:**
    ```bash
-   sudo apt-get install qt6-base-dev libarchive-dev cmake build-essential
+   sudo apt-get install qt6-base-dev libarchive-dev cmake build-essential ninja-build
    ```
 
    **macOS (with Homebrew):**
    ```bash
-   brew install qt6 libarchive cmake
+   brew install qt6 libarchive cmake ninja
    ```
 
    **Windows:**
@@ -52,16 +64,19 @@ A modern, cross-platform archive manager built with Qt and libarchive. NixRar pr
 
 3. **Build the project:**
    ```bash
-   mkdir build
-   cd build
-   cmake ..
-   make
+   cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+   cmake --build build
    ```
 
 4. **Run NixRar:**
    ```bash
-   ./NixRar
+   ./build/NixRar
    ```
+
+#### Create AppImage (Linux)
+```bash
+./scripts/build-appimage.sh
+```
 
 ## Usage 🚀
 
@@ -83,6 +98,21 @@ A modern, cross-platform archive manager built with Qt and libarchive. NixRar pr
 | BZIP2  | ✅   | ✅    | |
 | 7Z     | ✅   | ⚠️    | Limited write support |
 | CAB    | ✅   | ❌    | Read-only |
+
+## Continuous Integration 🔄
+
+NixRar uses GitHub Actions for automated builds and releases:
+
+- **Automatic builds** on every push to main branches
+- **Automatic releases** when version tags are pushed
+- **AppImage generation** for easy Linux distribution
+- **Binary archives** for manual installation
+
+### Creating a Release
+
+1. Tag your commit: `git tag -a v1.0.0 -m "Release v1.0.0"`
+2. Push the tag: `git push origin v1.0.0`
+3. GitHub Actions will automatically build and create a release
 
 ## Contributing 🤝
 
