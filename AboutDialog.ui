@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>dd::nixrar::AboutDialog</class>
+ <widget class="QDialog" name="dd::nixrar::AboutDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>746</width>
+    <height>942</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>About</string>
+  </property>
+  <property name="windowIcon">
+   <iconset theme="QIcon::ThemeIcon::HelpAbout"/>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QTextBrowser" name="aboutTextBrowser">
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="markdown">
+        <string># NixRar 🗃️
+
+**A Modern Cross-Platform Archive Manager**
+
+- - -
+## About NixRar
+
+NixRar is a powerful, free, and open-source archive manager built with Qt and
+libarchive. Designed as a modern alternative to traditional archive utilities,
+NixRar provides an intuitive interface for managing compressed files across
+Windows, macOS, and Linux platforms.
+
+## Key Features
+
+✨ **Multi-Format Support** \- Open and extract RAR, ZIP, TAR, GZIP, BZIP2, 7Z,
+CAB, and many more archive formats
+
+🖱️ **Drag &amp; Drop Interface** \- Effortlessly add files to archives by dragging
+them into the application
+
+🌍 **Cross-Platform** \- Native support for Windows, macOS, and Linux operating
+systems
+
+⚡ **Modern Qt Interface** \- Clean, responsive user interface built with
+contemporary design principles
+
+📊 **Progress Tracking** \- Visual feedback for extraction and compression
+operations
+
+🔐 **Secure Operations** \- Built-in integrity checking and secure file handling
+
+## Technical Information
+
+- **Framework**: Qt 6.x with modern C++20
+- **Archive Engine**: Powered by libarchive for robust format support
+- **Architecture**: Cross-platform native application
+- **License**: MIT License - free for personal and commercial use
+
+## Supported Archive Formats
+
+**Full Support**: ZIP, TAR, GZIP, BZIP2
+
+**Read Support**: RAR, 7Z, CAB, ARJ, LZH, ACE, UUE
+
+**Additional**: Many other formats via libarchive
+
+## Credits &amp; Acknowledgments
+
+**Developed by**: NixRar Development Team
+
+**Built with**: [Qt Framework](https://www.qt.io/) and 
+[libarchive](https://libarchive.org/)
+
+**Icons**: Various open-source icon collections
+
+## Support &amp; Contributing
+
+- **GitHub Repository**: 
+  [github.com/demirom/NixRar](https://github.com/demirom/NixRar)
+- **Report Issues**: Submit bug reports and feature requests on GitHub
+- **Contributing**: Pull requests and contributions are welcome
+
+- - -
+**NixRar** \- Making archive management simple, fast, and free for everyone!
+
+*Version 1.0 - Built with ❤️ for the open-source community*
+
+</string>
+       </property>
+       <property name="source">
+        <url>
+         <string>qrc:/Text/ABOUT.md</string>
+        </url>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="closeButton">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="NixRar.qrc"/>
+ </resources>
+ <connections/>
+</ui>

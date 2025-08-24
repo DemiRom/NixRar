@@ -32,6 +32,9 @@ add_executable(NixRar main.cpp
         Archive.h
         FileExplorer.cpp
         FileExplorer.h
+        AboutDialog.cpp
+        AboutDialog.h
+        AboutDialog.ui
 )
 
 target_link_libraries(NixRar

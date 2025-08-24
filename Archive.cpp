@@ -9,25 +9,28 @@
 
 namespace dd::nixrar {
     Archive::Archive(const QString &path) {
+        if (!QFile::exists(path)) {
+            createNewEmptyArchive(path);
+        }
+
         archiveDiskPath = path;
     }
 
     bool Archive::open() {
+        this->files.clear();
+
         archive_entry *entry;
         archive *a = archive_read_new();
         archive_read_support_filter_all(a);
         archive_read_support_format_all(a);
-        int r = archive_read_open_filename(a, this->archiveDiskPath.toStdString().c_str(), 10240);
 
-        if (r != ARCHIVE_OK) {
+        if (const int r = archive_read_open_filename(a, this->archiveDiskPath.toStdString().c_str(), 10240);
+            r != ARCHIVE_OK) {
             QMessageBox::critical(nullptr, "Error", archive_error_string(a));
             return false;
         }
 
-        while ((r = archive_read_next_header(a, &entry)) == ARCHIVE_OK) {
-            if (r == ARCHIVE_EOF)
-                break;
-
+        while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
             this->files.append({
                 QString::fromStdString(archive_entry_pathname(entry)),
                 archive_entry_size(entry),
@@ -78,7 +81,6 @@ namespace dd::nixrar {
     }
 
     void Archive::encrypt(QString password) {
-
     }
 
     bool Archive::extractFile(const int idx, const QString &pathToExtractTo) const {
@@ -99,22 +101,21 @@ namespace dd::nixrar {
         archive_write_disk_set_options(ext, ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_PERM);
         archive_write_disk_set_standard_lookup(ext);
 
-        if ((r = archive_read_open_filename(a, this->archiveDiskPath.toStdString().c_str(), 10240))) {
+        if (archive_read_open_filename(a, this->archiveDiskPath.toStdString().c_str(), 10240)) {
             QMessageBox::warning(nullptr, "Archive Read Error", archive_error_string(a));
             return false;
         }
 
         while ((r = archive_read_next_header(a, &entry)) == ARCHIVE_OK) {
-            const char* currentFile = archive_entry_pathname(entry);
+            const char *currentFile = archive_entry_pathname(entry);
             auto outputFilePath = QDir::cleanPath(pathToExtractTo + "/" + currentFile);
             archive_entry_set_pathname(entry, outputFilePath.toStdString().c_str());
 
             r = archive_write_header(ext, entry);
             if (r != ARCHIVE_OK) {
-                QMessageBox::warning(nullptr, "Disk Write Error",archive_error_string(ext));
-            }
-            else {
-                Archive::copyData(a, ext);
+                QMessageBox::warning(nullptr, "Disk Write Error", archive_error_string(ext));
+            } else {
+                // Archive::copyData(a, ext); //FIXME
                 r = archive_write_finish_entry(ext);
                 if (r != ARCHIVE_OK) {
                     QMessageBox::warning(nullptr, "Archive Close Error", archive_error_string(ext));
@@ -132,7 +133,6 @@ namespace dd::nixrar {
     }
 
     void Archive::decrypt(QString password) {
-
     }
 
     bool Archive::extractAll(const QString &pathToExtractTo) const {
@@ -151,34 +151,20 @@ namespace dd::nixrar {
         return this->files.length();
     }
 
-    int Archive::copyData(archive *ar, archive *aw) {
-        int r;
-        const void *buff;
-        size_t size;
-#if ARCHIVE_VERSION_NUMBER >= 3000000
-        int64_t offset;
-#else
-            off_t offset;
-#endif
-
-        for (;;) {
-            r = archive_read_data_block(ar, &buff, &size, &offset);
-            if (r == ARCHIVE_EOF)
-                return (ARCHIVE_OK);
-            if (r != ARCHIVE_OK)
-                return (r);
-            r = static_cast<int>(archive_write_data_block(aw, buff, size, offset));
-            if (r != ARCHIVE_OK) {
-                QMessageBox::warning(nullptr, "archive_write_data_block()",archive_error_string(aw));
-                return (r);
-            }
+    bool Archive::addFile(const QString &filePath) {
+        if (!QFile::exists(filePath)) {
+            return false;
         }
-    }
 
-    bool Archive::addFile(const QString &filePath, const QString &archivePath) {
-        QStringList fileList;
-        fileList << filePath;
-        return addFiles(fileList, archivePath);
+        QFile file(filePath);
+        if (!file.open(QFile::ReadOnly)) {
+            return false;
+        }
+        File f;
+
+        this->files.append({filePath, file.size(), });
+
+        return true;
     }
 
     bool Archive::addFiles(const QStringList &filePaths, const QString &archivePath) {
@@ -186,95 +172,148 @@ namespace dd::nixrar {
             return false;
         }
 
-        archive *input = archive_read_new();
-        archive *output = archive_write_new();
-        archive_entry *entry;
-        QString tempArchivePath = this->archiveDiskPath + ".tmp";
-
-        archive_read_support_filter_all(input);
-        archive_read_support_format_all(input);
-        archive_write_set_format_pax_restricted(output);
-        archive_write_set_compression_gzip(output);
-
-        if (archive_write_open_filename(output, tempArchivePath.toStdString().c_str()) != ARCHIVE_OK) {
-            archive_read_free(input);
-            archive_write_free(output);
-            return false;
-        }
-
-        if (archive_read_open_filename(input, this->archiveDiskPath.toStdString().c_str(), 10240) == ARCHIVE_OK) {
-            while (archive_read_next_header(input, &entry) == ARCHIVE_OK) {
-                if (archive_write_header(output, entry) == ARCHIVE_OK) {
-                    Archive::copyData(input, output);
-                    archive_write_finish_entry(output);
-                }
-            }
-            archive_read_close(input);
-        }
-        archive_read_free(input);
-
-        for (const QString &filePath : filePaths) {
-            QFileInfo fileInfo(filePath);
-            if (!fileInfo.exists() || !fileInfo.isFile()) {
-                continue;
-            }
-
-            QFile file(filePath);
-            if (!file.open(QIODevice::ReadOnly)) {
-                continue;
-            }
-
-            entry = archive_entry_new();
-            QString entryPath = archivePath.isEmpty() ? fileInfo.fileName() : archivePath + "/" + fileInfo.fileName();
-            archive_entry_set_pathname(entry, entryPath.toStdString().c_str());
-            archive_entry_set_size(entry, fileInfo.size());
-            archive_entry_set_filetype(entry, AE_IFREG);
-            archive_entry_set_perm(entry, 0644);
-            archive_entry_set_mtime(entry, fileInfo.lastModified().toSecsSinceEpoch(), 0);
-
-            if (archive_write_header(output, entry) == ARCHIVE_OK) {
-                QByteArray data = file.readAll();
-                archive_write_data(output, data.constData(), data.size());
-                archive_write_finish_entry(output);
-
-                File newFile;
-                newFile.filename = entryPath;
-                newFile.size = fileInfo.size();
-                newFile.type = fileInfo.suffix();
-                newFile.modified = fileInfo.lastModified();
-                this->files.append(newFile);
-            }
-
-            archive_entry_free(entry);
-            file.close();
-        }
-
-        archive_write_close(output);
-        archive_write_free(output);
-
-        QFile::remove(this->archiveDiskPath);
-        QFile::rename(tempArchivePath, this->archiveDiskPath);
+        // archive *input = archive_read_new();
+        // archive *output = archive_write_new();
+        // archive_entry *entry;
+        // QString tempArchivePath = this->archiveDiskPath + ".tmp";
+        //
+        // archive_read_support_filter_all(input);
+        // archive_read_support_format_all(input);
+        // archive_write_set_format_pax_restricted(output);
+        // // archive_write_set_compression_gzip(output);
+        // archive_write_zip_set_compression_lzma(output);
+        //
+        // if (archive_write_open_filename(output, tempArchivePath.toStdString().c_str()) != ARCHIVE_OK) {
+        //     archive_read_free(input);
+        //     archive_write_free(output);
+        //     return false;
+        // }
+        //
+        // if (archive_read_open_filename(input, this->archiveDiskPath.toStdString().c_str(), 10240) == ARCHIVE_OK) {
+        //     while (archive_read_next_header(input, &entry) == ARCHIVE_OK) {
+        //         if (archive_write_header(output, entry) == ARCHIVE_OK) {
+        //             copyData(input, output);
+        //             archive_write_finish_entry(output);
+        //         }
+        //     }
+        //     archive_read_close(input);
+        // }
+        // archive_read_free(input);
+        //
+        // for (const QString &filePath: filePaths) {
+        //     QFileInfo fileInfo(filePath);
+        //     if (!fileInfo.exists() || !fileInfo.isFile()) {
+        //         continue;
+        //     }
+        //
+        //     QFile file(filePath);
+        //     if (!file.open(QIODevice::ReadOnly)) {
+        //         continue;
+        //     }
+        //
+        //     entry = archive_entry_new();
+        //     QString entryPath = archivePath.isEmpty() ? fileInfo.fileName() : archivePath + "/" + fileInfo.fileName();
+        //     archive_entry_set_pathname(entry, entryPath.toStdString().c_str());
+        //     archive_entry_set_size(entry, fileInfo.size());
+        //     archive_entry_set_filetype(entry, AE_IFREG);
+        //     archive_entry_set_perm(entry, 0644);
+        //     archive_entry_set_mtime(entry, fileInfo.lastModified().toSecsSinceEpoch(), 0);
+        //
+        //     if (archive_write_header(output, entry) == ARCHIVE_OK) {
+        //         QByteArray data = file.readAll();
+        //         archive_write_data(output, data.constData(), data.size());
+        //         archive_write_finish_entry(output);
+        //
+        //         File newFile;
+        //         newFile.filename = entryPath;
+        //         newFile.size = fileInfo.size();
+        //         newFile.type = fileInfo.suffix();
+        //         newFile.modified = fileInfo.lastModified();
+        //         this->files.append(newFile);
+        //     }
+        //
+        //     archive_entry_free(entry);
+        //     file.close();
+        // }
+        //
+        // archive_write_close(output);
+        // archive_write_free(output);
+        //
+        // QFile::remove(this->archiveDiskPath);
+        // QFile::rename(tempArchivePath, this->archiveDiskPath);
 
         return true;
     }
 
-    bool Archive::createNewArchive(const QString &archivePath) {
+    bool Archive::createNewEmptyArchive(const QString &archivePath) {
         this->archiveDiskPath = archivePath;
         this->files.clear();
-        
+
         archive *a = archive_write_new();
         archive_write_set_format_pax_restricted(a);
-        archive_write_set_compression_gzip(a);
-        
+        // archive_write_set_compression_gzip(a);
+        archive_write_zip_set_compression_lzma(a);
+
         if (archive_write_open_filename(a, archivePath.toStdString().c_str()) != ARCHIVE_OK) {
             archive_write_free(a);
             return false;
         }
-        
+
         archive_write_close(a);
         archive_write_free(a);
-        
+
         this->opened = true;
+        return true;
+    }
+
+    bool Archive::saveArchiveToDisk() {
+        const QString tempArchivePath = this->archiveDiskPath + ".tmp";
+
+        archive *a = archive_write_new();
+        archive_write_set_format_pax_restricted(a);
+        // archive_write_set_compression_gzip(a);
+        archive_write_zip_set_compression_lzma(a);
+
+        if (archive_write_open_filename(a, tempArchivePath.toStdString().c_str()) != ARCHIVE_OK) {
+            archive_write_free(a);
+            return false;
+        }
+
+        for (const auto& file: this->files) {
+            QFile fileStream(file.filename);
+            if (!fileStream.open(QFile::WriteOnly)) {
+                return false;
+            }
+            struct archive_entry *entry = archive_entry_new();
+            archive_entry_set_pathname(entry, tempArchivePath.toStdString().c_str());
+            archive_entry_set_size(entry, fileStream.size());
+            archive_entry_set_filetype(entry, AE_IFREG);
+
+            // Write header first
+            if (archive_write_header(a, entry) != ARCHIVE_OK) {
+                archive_entry_free(entry);
+                return false;
+            }
+
+            // Write file data using archive_write_data (not data_block)
+            char buffer[8192];
+            qint64 bytesRead;
+            while ((bytesRead = fileStream.read(buffer, sizeof(buffer))) > 0) {
+                if (archive_write_data(a, buffer, bytesRead) < 0) {
+                    archive_entry_free(entry);
+                    return false;
+                }
+            }
+
+            archive_entry_free(entry);
+        }
+
+        archive_write_close(a);
+        archive_write_free(a);
+
+        QFile::copy(tempArchivePath, this->archiveDiskPath);
+        QFile::remove(tempArchivePath);
+
         return true;
     }
 } // nixrar

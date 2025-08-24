@@ -22,7 +22,7 @@ namespace dd::nixrar {
         Q_OBJECT
 
     public:
-        explicit MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+        explicit MainWindow(QStringList args = QStringList(), QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
         ~MainWindow() override;
 
@@ -35,8 +35,10 @@ namespace dd::nixrar {
         QLineEdit *directoryLineEdit;
         Archive *archive{};
 
+        void openArchiveInternal(const QString &filename);
+
     private slots:
-        void openArchive();
+        void openArchiveWithDialog();
 
         void about();
 
@@ -59,6 +61,99 @@ namespace dd::nixrar {
         void showArchiveInfo();
 
         void repairArchive();
+
+        void saveArchiveCopyAs();
+
+        void changeDrive();
+
+        void setDefaultPassword();
+
+        void copyFilesToClipboard();
+
+        void pasteFilesFromClipboard();
+
+        void copyFullNamesToClipboard();
+
+        void selectAll();
+
+        void selectGroup();
+
+        void deselectGroup();
+
+        void invertSelection();
+
+        void extractToSpecifiedFolder();
+
+        void viewFile();
+
+        void deleteFile();
+
+        void renameFile();
+
+        void printFile();
+
+        void extractWithoutConfirmation();
+
+        void protectArchiveFromDamage();
+
+        void lockArchive();
+
+        void scanArchiveForViruses();
+
+        void convertArchives();
+
+        void convertArchiveToSFX();
+
+        void findFiles();
+
+        void showInformation();
+
+        void generateReport();
+
+        void benchmark();
+
+        void addFilesToArchive();
+
+        void addToFavourites();
+
+        void organizeFavourites();
+
+        void settings();
+
+        void importAndExport();
+
+        void clearHistory();
+
+        void flatFoldersView();
+
+        void listView();
+
+        void details();
+
+        void showDiskFolders();
+
+        void showArchiveFolders();
+
+        void organizeThemes();
+
+        void getMoreThemes();
+
+        void themeDefault();
+
+        void saveCurrent();
+
+        void encodingHelp();
+
+        void encodingDefault();
+
+        void viewLog();
+
+        void clearLog();
+
+        void helpTopics();
+
+        void goToNixRarGithubPage();
+
     };
 
 } // dd::nixrar
