@@ -261,7 +261,7 @@ namespace dd::nixrar {
 
         archive_write_close(a);
         archive_write_free(a);
-
+        
         this->opened = true;
         return true;
     }
