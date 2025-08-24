@@ -251,8 +251,8 @@ namespace dd::nixrar {
 
         archive *a = archive_write_new();
         archive_write_set_format_pax_restricted(a);
-        // archive_write_set_compression_gzip(a);
-        archive_write_zip_set_compression_lzma(a);
+        archive_write_set_compression_gzip(a);
+        // archive_write_zip_set_compression_lzma(a);
 
         if (archive_write_open_filename(a, archivePath.toStdString().c_str()) != ARCHIVE_OK) {
             archive_write_free(a);
@@ -271,8 +271,8 @@ namespace dd::nixrar {
 
         archive *a = archive_write_new();
         archive_write_set_format_pax_restricted(a);
-        // archive_write_set_compression_gzip(a);
-        archive_write_zip_set_compression_lzma(a);
+        archive_write_set_compression_gzip(a);
+        // archive_write_zip_set_compression_lzma(a);
 
         if (archive_write_open_filename(a, tempArchivePath.toStdString().c_str()) != ARCHIVE_OK) {
             archive_write_free(a);
