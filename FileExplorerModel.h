@@ -12,6 +12,8 @@ public:
     explicit FileExplorerModel(QObject *parent = nullptr);
     [[nodiscard]] int rowCount(const QModelIndex &parent) const override;
 
+    [[nodiscard]] int rowCount() const;
+
     [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
 
     [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;

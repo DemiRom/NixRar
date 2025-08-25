@@ -3,7 +3,7 @@
 #include <archive.h>
 #include <QtCore/qdatetime.h>
 #include <QtCore/qstring.h>
-
+#include <QObject>
 
 namespace dd::nixrar {
 
@@ -16,10 +16,10 @@ public:
     QByteArray data;
 };
 
-class Archive {
+class Archive final : public QObject {
+Q_OBJECT
 public:
     explicit Archive(const QString &path);
-    ~Archive() = default;
 
     bool open();
     [[nodiscard]] bool isOpen() const;
@@ -31,23 +31,35 @@ public:
 
     QString getArchivePath();
 
-    void encrypt(QString password);
-    void decrypt(QString password);
-
     [[nodiscard]] bool extractFile(int idx, const QString &pathToExtractTo) const;
     [[nodiscard]] bool extractAll(const QString &pathToExtractTo) const;
     [[nodiscard]] qsizetype getFileCount() const;
     
     bool addFile(const QString &filePath);
-    bool addFiles(const QStringList &filePaths, const QString &archivePath = "");
+    bool addFiles(const QStringList &filePaths);
     bool createNewEmptyArchive(const QString &archivePath);
 
+    void setPassword(const QString &password);
+    [[nodiscard]] QString getPassword() const;
+
+signals:
+    void needPassword();
+
 private:
+    mutable QByteArray currentPassword;
+
+    QString archivePassword;
     QString archiveDiskPath;
+
     QVector<File> files;
     bool opened = false;
 
     bool saveArchiveToDisk();
+
+
+    static const char* passphraseCallback(archive*, void*);
+    const char * getPassphraseForCallback();
+
 };
 
 } // nixrar

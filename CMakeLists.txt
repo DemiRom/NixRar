@@ -46,6 +46,9 @@ add_executable(NixRar main.cpp
         AboutDialog.cpp
         AboutDialog.h
         AboutDialog.ui
+        PasswordDialog.cpp
+        PasswordDialog.h
+        PasswordDialog.ui
 )
 
 target_link_libraries(NixRar

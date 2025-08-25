@@ -7,6 +7,7 @@
 #include <QFileInfo>
 #include <QIODevice>
 
+
 namespace dd::nixrar {
     Archive::Archive(const QString &path) {
         if (!QFile::exists(path)) {
@@ -23,6 +24,12 @@ namespace dd::nixrar {
         archive *a = archive_read_new();
         archive_read_support_filter_all(a);
         archive_read_support_format_all(a);
+
+        if (archive_read_has_encrypted_entries(a) == ARCHIVE_OK) {
+            if (this->archivePassword.isEmpty()) {
+                archive_read_set_passphrase_callback(a, this, Archive::passphraseCallback);
+            }
+        }
 
         if (const int r = archive_read_open_filename(a, this->archiveDiskPath.toStdString().c_str(), 10240);
             r != ARCHIVE_OK) {
@@ -80,9 +87,6 @@ namespace dd::nixrar {
         return this->archiveDiskPath;
     }
 
-    void Archive::encrypt(QString password) {
-    }
-
     bool Archive::extractFile(const int idx, const QString &pathToExtractTo) const {
         if (const QDir dir(pathToExtractTo); !dir.exists())
             return false;
@@ -132,9 +136,6 @@ namespace dd::nixrar {
         return true;
     }
 
-    void Archive::decrypt(QString password) {
-    }
-
     bool Archive::extractAll(const QString &pathToExtractTo) const {
         if (const QDir dir(pathToExtractTo); !dir.exists(pathToExtractTo))
             return false;
@@ -167,80 +168,15 @@ namespace dd::nixrar {
         return true;
     }
 
-    bool Archive::addFiles(const QStringList &filePaths, const QString &archivePath) {
+    bool Archive::addFiles(const QStringList &filePaths) {
         if (!this->opened) {
             return false;
         }
 
-        // archive *input = archive_read_new();
-        // archive *output = archive_write_new();
-        // archive_entry *entry;
-        // QString tempArchivePath = this->archiveDiskPath + ".tmp";
-        //
-        // archive_read_support_filter_all(input);
-        // archive_read_support_format_all(input);
-        // archive_write_set_format_pax_restricted(output);
-        // // archive_write_set_compression_gzip(output);
-        // archive_write_zip_set_compression_lzma(output);
-        //
-        // if (archive_write_open_filename(output, tempArchivePath.toStdString().c_str()) != ARCHIVE_OK) {
-        //     archive_read_free(input);
-        //     archive_write_free(output);
-        //     return false;
-        // }
-        //
-        // if (archive_read_open_filename(input, this->archiveDiskPath.toStdString().c_str(), 10240) == ARCHIVE_OK) {
-        //     while (archive_read_next_header(input, &entry) == ARCHIVE_OK) {
-        //         if (archive_write_header(output, entry) == ARCHIVE_OK) {
-        //             copyData(input, output);
-        //             archive_write_finish_entry(output);
-        //         }
-        //     }
-        //     archive_read_close(input);
-        // }
-        // archive_read_free(input);
-        //
-        // for (const QString &filePath: filePaths) {
-        //     QFileInfo fileInfo(filePath);
-        //     if (!fileInfo.exists() || !fileInfo.isFile()) {
-        //         continue;
-        //     }
-        //
-        //     QFile file(filePath);
-        //     if (!file.open(QIODevice::ReadOnly)) {
-        //         continue;
-        //     }
-        //
-        //     entry = archive_entry_new();
-        //     QString entryPath = archivePath.isEmpty() ? fileInfo.fileName() : archivePath + "/" + fileInfo.fileName();
-        //     archive_entry_set_pathname(entry, entryPath.toStdString().c_str());
-        //     archive_entry_set_size(entry, fileInfo.size());
-        //     archive_entry_set_filetype(entry, AE_IFREG);
-        //     archive_entry_set_perm(entry, 0644);
-        //     archive_entry_set_mtime(entry, fileInfo.lastModified().toSecsSinceEpoch(), 0);
-        //
-        //     if (archive_write_header(output, entry) == ARCHIVE_OK) {
-        //         QByteArray data = file.readAll();
-        //         archive_write_data(output, data.constData(), data.size());
-        //         archive_write_finish_entry(output);
-        //
-        //         File newFile;
-        //         newFile.filename = entryPath;
-        //         newFile.size = fileInfo.size();
-        //         newFile.type = fileInfo.suffix();
-        //         newFile.modified = fileInfo.lastModified();
-        //         this->files.append(newFile);
-        //     }
-        //
-        //     archive_entry_free(entry);
-        //     file.close();
-        // }
-        //
-        // archive_write_close(output);
-        // archive_write_free(output);
-        //
-        // QFile::remove(this->archiveDiskPath);
-        // QFile::rename(tempArchivePath, this->archiveDiskPath);
+        for (const auto& filePath : filePaths) {
+            if (!addFile(filePath))
+                return false;
+        }
 
         return true;
     }
@@ -264,6 +200,14 @@ namespace dd::nixrar {
 
         this->opened = true;
         return true;
+    }
+
+    void Archive::setPassword(const QString &password) {
+        this->archivePassword = password;
+    }
+
+    QString Archive::getPassword() const {
+        return this->archivePassword;
     }
 
     bool Archive::saveArchiveToDisk() {
@@ -315,6 +259,24 @@ namespace dd::nixrar {
         QFile::remove(tempArchivePath);
 
         return true;
+    }
+
+    const char* Archive::passphraseCallback(archive *a, void *userData) {
+        (void)a; //Cast it into the fire!!!!!
+
+        auto* self = static_cast<Archive*>(userData);
+        return self->getPassphraseForCallback();
+    }
+
+    const char * Archive::getPassphraseForCallback() {
+        if (this->archivePassword.isEmpty())
+            emit needPassword();
+
+        if (this->archivePassword.isEmpty())
+            return nullptr;
+
+        this->currentPassword = this->archivePassword.toUtf8();
+        return this->currentPassword.constData();
     }
 } // nixrar
 // dd

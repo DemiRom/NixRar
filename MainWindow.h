@@ -35,6 +35,7 @@ namespace dd::nixrar {
         QLineEdit *directoryLineEdit;
         Archive *archive{};
 
+
         void openArchiveInternal(const QString &filename);
 
     private slots:
@@ -72,7 +73,7 @@ namespace dd::nixrar {
 
         void pasteFilesFromClipboard();
 
-        void copyFullNamesToClipboard();
+        void copyFullNamesToClipboard() const;
 
         void selectAll();
 
@@ -154,6 +155,7 @@ namespace dd::nixrar {
 
         void goToNixRarGithubPage();
 
+        void getPasswordFromUser();
     };
 
 } // dd::nixrar

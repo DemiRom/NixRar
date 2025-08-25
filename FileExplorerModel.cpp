@@ -6,6 +6,10 @@ namespace dd::nixrar {
     }
 
     int FileExplorerModel::rowCount(const QModelIndex &parent) const {
+        return this->rowCount();
+    }
+
+    int FileExplorerModel::rowCount() const {
         if (this->archive == nullptr)
             return 0;
 
