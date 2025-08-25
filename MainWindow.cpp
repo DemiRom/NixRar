@@ -12,6 +12,7 @@
 #include <QMimeData>
 #include <QProgressDialog>
 #include <QClipboard>
+#include <QDesktopServices>
 
 #include "FileExplorer.h"
 #include "FileExplorerModel.h"
@@ -246,6 +247,7 @@ namespace dd::nixrar {
         if (success && !progressDialog.wasCanceled()) {
             // QMessageBox::information(this, tr("Success"),
             //     tr("Successfully added %1 file(s) to the archive.").arg(filePaths.size()));
+            statusBar()->showMessage(tr("Successfully added %1 file(s) to the archive.").arg(filePaths.size()), 5000);
             if (this->fileExplorerModel != nullptr) {
                 this->fileExplorerModel->setArchive(this->archive);
             }
@@ -305,6 +307,7 @@ namespace dd::nixrar {
     }
 
     void MainWindow::changeDrive() {
+        //TODO This would only be needed to be implemented for the Windows release iirc.
     }
 
     void MainWindow::setDefaultPassword() {
@@ -393,7 +396,7 @@ namespace dd::nixrar {
             return;
         }
 
-        QItemSelectionModel* selectionModel = fileExplorer->selectionModel();
+        QItemSelectionModel *selectionModel = fileExplorer->selectionModel();
 
         // Store what's currently selected
         QItemSelection currentSelection = selectionModel->selection();
@@ -407,7 +410,7 @@ namespace dd::nixrar {
         // Show feedback
         int count = selectionModel->selectedRows().count();
         statusBar()->showMessage(QString("Inverted selection: %1 files").arg(count),
-    3000);
+                                 3000);
     }
 
     void MainWindow::extractToSpecifiedFolder() {
@@ -516,6 +519,11 @@ namespace dd::nixrar {
     }
 
     void MainWindow::goToNixRarGithubPage() {
+        QUrl url("https://github.com/demirom/NixRar");
+
+        if (!QDesktopServices::openUrl(url)) {
+            QMessageBox::warning(this, "Error", tr("Could not open the web browser.\nPlease visit: %1").arg(url.toString()));
+        }
     }
 
     void MainWindow::getPasswordFromUser() {

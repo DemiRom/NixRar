@@ -3,42 +3,60 @@
 
 #include <QPushButton>
 #include <QTreeView>
+#include <QtCore/qdir.h>
 
 namespace dd::nixrar::ui {
-QT_BEGIN_NAMESPACE
-namespace Ui { class FileExplorer; }
-QT_END_NAMESPACE
+    QT_BEGIN_NAMESPACE
 
-class FileExplorer : public QTreeView {
-Q_OBJECT
+    namespace Ui {
+        class FileExplorer;
+    }
 
-public:
-    explicit FileExplorer(QWidget *parent = nullptr);
-    ~FileExplorer() override;
+    QT_END_NAMESPACE
 
-    void updateView();
+    class FileExplorer : public QTreeView {
+        Q_OBJECT
 
-signals:
-    void filesDropped(const QStringList &filePaths);
+    public:
+        explicit FileExplorer(QWidget *parent = nullptr);
 
-protected:
-void enterEvent(QEnterEvent *event) override;
+        ~FileExplorer() override;
 
-void leaveEvent(QEvent *event) override;
+        void setPath(const QDir &path);
 
-void moveEvent(QMoveEvent *event) override;
+        QDir getPath();
 
-void dragEnterEvent(QDragEnterEvent *event) override;
+    public slots:
+        void pathChanged(const QString &path);
 
-void dragLeaveEvent(QDragLeaveEvent *event) override;
+    signals:
+        void filesDropped(const QStringList &filePaths);
 
-void dropEvent(QDropEvent *event) override;
+        void directoryChanged(const QString &directory);
+        void fileOpened(const QString &filename);
 
-void dragMoveEvent(QDragMoveEvent *event) override;
+    protected:
+        void mouseDoubleClickEvent(QMouseEvent *event) override;
 
-private:
-    bool isDragActive = false;
-};
+        void enterEvent(QEnterEvent *event) override;
+
+        void leaveEvent(QEvent *event) override;
+
+        void moveEvent(QMoveEvent *event) override;
+
+        void dragEnterEvent(QDragEnterEvent *event) override;
+
+        void dragLeaveEvent(QDragLeaveEvent *event) override;
+
+        void dropEvent(QDropEvent *event) override;
+
+        void dragMoveEvent(QDragMoveEvent *event) override;
+
+    private:
+        bool isDragActive = false;
+
+        QDir currentPath;
+    };
 } // dd::nixrar::ui
 
 #endif //FILEEXPLORER_H

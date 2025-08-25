@@ -1,5 +1,7 @@
 #include "FileExplorerModel.h"
 
+#include <QtGui/QIcon>
+
 namespace dd::nixrar {
     FileExplorerModel::FileExplorerModel(QObject *parent) {
         this->setParent(parent);
@@ -31,15 +33,25 @@ namespace dd::nixrar {
 
         switch (index.column()) {
             case 0:
-                if (role == Qt::DisplayRole)
-                    return archive->getFilename(index.row());
+                if (role == Qt::DecorationRole) {
+                    if (archive->getFileSize(index.row()) == 0) {
+                        return QIcon(":/Icons/icons/folders.png");
+                    }
+                    return {};
+                }
+                if (role == Qt::DisplayRole) {
+                    return {};
+                }
             case 1:
                 if (role == Qt::DisplayRole)
-                    return archive->getFileSize(index.row());
+                    return archive->getFilename(index.row());
             case 2:
                 if (role == Qt::DisplayRole)
-                    return archive->getFileType(index.row());
+                    return archive->getFileSize(index.row());
             case 3:
+                if (role == Qt::DisplayRole)
+                    return archive->getFileType(index.row());
+            case 4:
                 if (role == Qt::DisplayRole)
                     return archive->getFileModifiedDate(index.row());
             default:
@@ -51,12 +63,14 @@ namespace dd::nixrar {
         if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
             switch (section) {
                 case 0:
-                    return "Path";
+                    return "";
                 case 1:
-                    return "Size";
+                    return "Path";
                 case 2:
-                    return "Type";
+                    return "Size";
                 case 3:
+                    return "Type";
+                case 4:
                     return "Modified";
                 default:
                     return {};
@@ -78,4 +92,4 @@ namespace dd::nixrar {
         beginResetModel();
         endResetModel();
     }
-}
+};

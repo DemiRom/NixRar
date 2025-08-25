@@ -11,6 +11,34 @@ namespace dd::nixrar::ui {
         setDropIndicatorShown(true);
     }
 
+    void FileExplorer::mouseDoubleClickEvent(QMouseEvent *event) {
+        auto selectedItems = this->selectionModel()->selectedRows();
+
+        for (auto item : selectedItems) {
+            // Get the filename from the model
+            QString filename = this->model()->data(item.sibling(item.row(), 1), Qt::DisplayRole).toString();
+
+            // Check if it's a directory (size == 0)
+            qint64 fileSize = this->model()->data(item.sibling(item.row(), 2), Qt::DisplayRole).toLongLong();
+
+            if (fileSize == 0) {
+#ifdef QT_DEBUG
+                qDebug() << "Directory!" << filename;
+#endif
+                emit directoryChanged(filename);
+                this->currentPath.cd(filename);
+                qDebug() << "CurrentPath!" << this->currentPath ;
+            } else {
+#ifdef QT_DEBUG
+                qDebug() << "File!" << filename;
+#endif
+                emit fileOpened(filename);
+            }
+        }
+
+        QTreeView::mouseDoubleClickEvent(event);
+    }
+
     void FileExplorer::enterEvent(QEnterEvent *event) {
         QTreeView::enterEvent(event);
     }
@@ -103,7 +131,15 @@ namespace dd::nixrar::ui {
 
     FileExplorer::~FileExplorer() = default;
 
-    void FileExplorer::updateView() {
+    void FileExplorer::setPath(const QDir &path) {
+        this->currentPath = path;
+    }
 
+    QDir FileExplorer::getPath() {
+        return this->currentPath;
+    }
+
+    void FileExplorer::pathChanged(const QString &path) {
+        this->currentPath = path;
     }
 } // dd::nixrar::ui

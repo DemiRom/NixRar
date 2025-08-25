@@ -408,27 +408,39 @@
     <string>Copy Full Names to Clipboard</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+V</string>
+    <string>Ctrl+Shift+C</string>
    </property>
   </action>
   <action name="actionSelect_All">
    <property name="text">
     <string>Select All</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
+   </property>
   </action>
   <action name="actionSelect_Group">
    <property name="text">
     <string>Select Group</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
    </property>
   </action>
   <action name="actionDeselect_Group">
    <property name="text">
     <string>Deselect Group</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+G</string>
+   </property>
   </action>
   <action name="actionInvert_Selection">
    <property name="text">
     <string>Invert Selection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+I</string>
    </property>
   </action>
   <action name="actionExtract_to_Specified_Folder">
@@ -454,6 +466,9 @@
   <action name="actionPrint_File">
    <property name="text">
     <string>Print File</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="actionExtract_Without_Confirmation">
@@ -494,6 +509,9 @@
   <action name="actionFind_Files">
    <property name="text">
     <string>Find Files</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
    </property>
   </action>
   <action name="actionShow_Information">
